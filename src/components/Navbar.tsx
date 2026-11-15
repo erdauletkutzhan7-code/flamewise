@@ -73,7 +73,7 @@ const HamburgerIcon = ({ open }: { open: boolean }) => (
 export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const { lang, setLang, t } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -150,35 +150,6 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* ── Language Switcher & Controls ── */}
-          <div className="hidden sm:flex items-center gap-2 border-l border-white/10 pl-4">
-            <button
-              onClick={() => setLang('ru')}
-              aria-label="Переключить на русский язык"
-              className={clsx(
-                'px-2 py-1 rounded text-xs font-mono transition-all',
-                lang === 'ru'
-                  ? 'bg-flame-500/20 text-flame-300 font-bold border border-flame-500/50'
-                  : 'text-gray-400 hover:text-white'
-              )}
-            >
-              RU
-            </button>
-            <span className="text-gray-600 text-xs">/</span>
-            <button
-              onClick={() => setLang('en')}
-              aria-label="Switch to English language"
-              className={clsx(
-                'px-2 py-1 rounded text-xs font-mono transition-all',
-                lang === 'en'
-                  ? 'bg-flame-500/20 text-flame-300 font-bold border border-flame-500/50'
-                  : 'text-gray-400 hover:text-white'
-              )}
-            >
-              EN
-            </button>
-          </div>
-
           {/* ── Hamburger (mobile) ── */}
           <button
             type="button"
@@ -232,31 +203,6 @@ export default function Navbar() {
                     </li>
                   ))}
                 </ul>
-
-                {/* Mobile Language Switcher */}
-                <div className="p-3 border-t border-white/10 flex items-center justify-around bg-black/30">
-                  <span className="text-xs text-gray-400 font-mono">LANGUAGE:</span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setLang('ru')}
-                      className={clsx(
-                        'px-3 py-1 rounded text-xs font-mono',
-                        lang === 'ru' ? 'bg-flame-500 text-white font-bold' : 'text-gray-400'
-                      )}
-                    >
-                      Русский (RU)
-                    </button>
-                    <button
-                      onClick={() => setLang('en')}
-                      className={clsx(
-                        'px-3 py-1 rounded text-xs font-mono',
-                        lang === 'en' ? 'bg-flame-500 text-white font-bold' : 'text-gray-400'
-                      )}
-                    >
-                      English (EN)
-                    </button>
-                  </div>
-                </div>
 
                 {/* bottom accent strip */}
                 <div className="h-px bg-gradient-to-r from-transparent via-flame-500/60 to-transparent" />

@@ -1,92 +1,10 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
-
-export type Language = 'ru' | 'en'
+import { createContext, useContext, type ReactNode } from 'react'
 
 interface TranslationContextType {
-  lang: Language
-  setLang: (lang: Language) => void
   t: (key: string) => string
 }
 
-const DICTIONARY: Record<Language, Record<string, string>> = {
-  ru: {
-    // Navigation
-    'nav.home': 'Главная',
-    'nav.dashboard': 'Каталог NASA',
-    'nav.ranking': 'Ранжирование',
-    'nav.insights': 'Инсайты',
-    'nav.engineering': 'Инженерный бриф',
-    'nav.lab': 'Лаборатория пламени',
-    'nav.visualizations': 'Графики',
-    'nav.copilot': 'Ассистент NASA',
-    'nav.about': 'О проекте',
-
-    // Hero
-    'hero.badge': 'NASA SPACE APPS CHALLENGE 2026 · ПЛАМЯ В НЕВЕСОМОСТИ',
-    'hero.title_part1': 'Пламя ведет себя иначе,',
-    'hero.title_part2': 'когда гравитация исчезает.',
-    'hero.desc': 'В условиях микрогравитации исчезает естественная плавучесть. Пламя горит в виде почти идеальных неподвижных сфер, создает невидимые низкотемпературные холодные пламена и существует при уровнях кислорода, при которых на Земле огонь гаснет.',
-    'hero.cta_lab': 'Запустить Лабораторию',
-    'hero.cta_explore': 'Исследовать базу NASA',
-    'hero.stat_psi': 'Миссий NASA PSI',
-    'hero.stat_temp': 'Холодные пламена FLEX',
-    'hero.stat_smoke': 'Размер сажи SAME',
-
-    // Lab Page
-    'lab.title': 'Лаборатория динамики пламени',
-    'lab.subtitle': 'ИНТЕРАКТИВНЫЙ НАУЧНЫЙ СИМУЛЯТОР NASA',
-    'lab.disclaimer_title': 'Научная прозрачность:',
-    'lab.disclaimer_text': 'Этот интерактивный визуализатор является образовательной схематической моделью, а не расчетным CFD-кодом. Он демонстрирует качественную трансформацию формы пламени при исчезновении плавучести согласно данным NASA (BASS, Saffire, FLEX). Вероятности риска не выдумываются.',
-    'lab.auto_demo_start': 'Запустить авто-демо',
-    'lab.auto_demo_stop': 'Остановить авто-демо',
-    'lab.gravity_target': 'Целевое гравитационное поле (g)',
-    'lab.length_scale': 'Характерный размер L',
-    'lab.airflow': 'Вентиляционный обдув',
-    'lab.oxygen_conc': 'Концентрация кислорода (O₂ %)',
-    'lab.pressure': 'Давление (кПа)',
-    'lab.fuel': 'Материал топлива',
-    'lab.event_log': 'Лог событий симуляции',
-    'lab.clear': 'Очистить',
-    'lab.speed': 'СКОРОСТЬ:',
-    'lab.buoyant_scale': 'Масштаб скорости плавучести',
-    'lab.po2_scale': 'Парциальное давление O₂',
-    'lab.nasa_benchmarks': 'Ориентиры NASA',
-    'lab.history_chart_title': 'История расчетной скорости u(t)',
-    'lab.history_chart_note': 'ДЕМОНСТРАЦИОННЫЙ РАСЧЕТ · НЕ ИЗМЕРЕННЫЕ ДАННЫЕ',
-
-    // Data Explorer
-    'data.title': 'Научный исследователь данных',
-    'data.badge': 'ВЕРИФИЦИРОВАННЫЙ АРХИВ NASA',
-    'data.desc': 'Диапазоны параметров, условия тестов и количество образцов строго из официальных отчетов NASA.',
-    'data.export_csv': 'Экспорт в CSV',
-    'data.filter_label': 'Фильтр исследования:',
-    'data.scope_limitation': 'Границы и ограничения:',
-    'data.source_link': 'Открыть источник NASA ↗',
-
-    // Copilot / Assistant
-    'copilot.title': 'Исследовательский ассистент NASA',
-    'copilot.badge': 'КУРИРУЕМЫЕ ОТВЕТЫ ИЗ ИСТОЧНИКОВ · БЕЗ ГАЛЛЮЦИНАЦИЙ',
-    'copilot.notice_title': 'Архитектурное уведомление:',
-    'copilot.notice_text': 'Все ответы строго курируются из рецензируемых научных публикаций и отчетов NASA. Для обеспечения академической достоверности ассистент отвечает только в рамках верифицированных экспериментов.',
-    'copilot.placeholder': 'Спросите о форме пламени, дыме, Saffire, FLEX, BASS...',
-    'copilot.topics_title': 'Курируемые темы вопросов',
-    'copilot.scope_title': 'Научный охват источников',
-    'copilot.scope_desc': 'Охватывает эксперименты BASS (горение твердых тел), Saffire (масштаб корабля), FLEX (капли и холодное пламя), SAME (частицы дыма), ACME (диффузия газов и сажа) и FM2 (лунное горение).',
-
-    // Ranking Page
-    'ranking.title': 'Ранжирование применимости исследований',
-    'ranking.badge': 'ДЕТЕРМИНИРОВАННОЕ РАНЖИРОВАНИЕ',
-    'ranking.desc': 'Детерминированное сопоставление исследований горения NASA с конкретными профилями пилотируемых миссий (МКС, Луна, марсианский ровер, скафандр).',
-    'ranking.transparency': 'ПРИМЕЧАНИЕ: Оценки отражают научную релевантность исследований; они не вычисляют вероятность реального пожара.',
-    'ranking.mission_env': 'Среда миссии',
-
-    // Common
-    'common.source': 'Источник:',
-    'common.limitations': 'Ограничения:',
-    'common.reset': 'Сброс',
-    'common.apply': 'Применить'
-  },
-  en: {
+const DICTIONARY: Record<string, string> = {
     // Navigation
     'nav.home': 'Home',
     'nav.dashboard': 'NASA Catalog',
@@ -95,7 +13,7 @@ const DICTIONARY: Record<Language, Record<string, string>> = {
     'nav.engineering': 'Engineering Brief',
     'nav.lab': 'Flame Lab',
     'nav.visualizations': 'Charts',
-    'nav.copilot': 'NASA Copilot',
+    'nav.copilot': 'NASA Research Assistant',
     'nav.about': 'About',
 
     // Hero
@@ -142,7 +60,7 @@ const DICTIONARY: Record<Language, Record<string, string>> = {
 
     // Copilot / Assistant
     'copilot.title': 'NASA Combustion Research Assistant',
-    'copilot.badge': 'SOURCE-BOUNDED CURATED RESPONSES · ZERO UNVERIFIED HALLUCINATIONS',
+    'copilot.badge': 'SOURCE-BASED ANSWERS · VERIFIED REFERENCES',
     'copilot.notice_title': 'Architecture Notice:',
     'copilot.notice_text': 'Responses are curated directly from peer-reviewed NASA microgravity papers and technical reports. To maintain scientific integrity and prevent hallucination, answers are restricted to verified investigation domains.',
     'copilot.placeholder': 'Ask about microgravity flame shape, smoke, Saffire, FLEX, BASS...',
@@ -162,29 +80,15 @@ const DICTIONARY: Record<Language, Record<string, string>> = {
     'common.limitations': 'Limitations:',
     'common.reset': 'Reset',
     'common.apply': 'Apply'
-  }
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined)
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
-  // Default language is Russian per requirements
-  const [lang, setLangState] = useState<Language>(() => {
-    const saved = localStorage.getItem('solforge_lang') as Language
-    return saved === 'en' || saved === 'ru' ? saved : 'ru'
-  })
-
-  const setLang = (newLang: Language) => {
-    setLangState(newLang)
-    localStorage.setItem('solforge_lang', newLang)
-  }
-
-  const t = (key: string): string => {
-    return DICTIONARY[lang][key] || DICTIONARY['en'][key] || key
-  }
+  const t = (key: string): string => DICTIONARY[key] || key
 
   return (
-    <TranslationContext.Provider value={{ lang, setLang, t }}>
+    <TranslationContext.Provider value={{ t }}>
       {children}
     </TranslationContext.Provider>
   )
