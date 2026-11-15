@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="flameGrad" cx="50%" cy="80%" r="60%">
+      <stop offset="0%" stop-color="#fff7a0"/>
+      <stop offset="30%" stop-color="#ff8c00"/>
+      <stop offset="70%" stop-color="#ff4500"/>
+      <stop offset="100%" stop-color="#8b0000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="50" cy="65" rx="22" ry="28" fill="url(#flameGrad)"/>
+  <ellipse cx="50" cy="45" rx="12" ry="20" fill="#ffcc00" opacity="0.8"/>
+  <circle cx="50" cy="40" r="8" fill="#fffde7" opacity="0.9"/>
+</svg>
