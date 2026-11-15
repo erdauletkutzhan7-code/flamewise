@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import usePageVisibility from '../hooks/usePageVisibility'
 import { motion, useInView } from 'framer-motion'
 import {
   ResponsiveContainer,
@@ -177,25 +178,30 @@ function SmokeTooltip({ active, payload, label }: any) {
 
 function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
+  const elapsedRef = useRef(0)
   const inView = useInView(ref, { once: true })
+  const isVisible = usePageVisibility()
   const [displayed, setDisplayed] = useState('0')
 
   useEffect(() => {
-    if (!inView) return
+    if (!inView || !isVisible) return
     const num = parseFloat(target.replace(/[^0-9.]/g, ''))
     const isDecimal = target.includes('.')
     const duration = 1600
-    const startTime = performance.now()
+    const startTime = performance.now() - elapsedRef.current
+    let frame = 0
     const tick = (now: number) => {
-      const elapsed = now - startTime
+      const elapsed = Math.min(now - startTime, duration)
+      elapsedRef.current = elapsed
       const progress = Math.min(elapsed / duration, 1)
       const eased = 1 - Math.pow(1 - progress, 3)
       const current = eased * num
       setDisplayed(isDecimal ? current.toFixed(1) : Math.round(current).toString())
-      if (progress < 1) requestAnimationFrame(tick)
+      if (progress < 1) frame = requestAnimationFrame(tick)
     }
-    requestAnimationFrame(tick)
-  }, [inView, target])
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [inView, isVisible, target])
 
   return <span ref={ref}>{displayed}{suffix}</span>
 }

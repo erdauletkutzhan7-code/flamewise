@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
+import usePageVisibility from '../hooks/usePageVisibility'
 
 interface Interactive3DFlameProps {
   initialGravity?: number // 0 (microgravity) to 1 (Earth 1g)
@@ -15,6 +16,7 @@ export default function Interactive3DFlame({
   width = 460,
   height = 420,
 }: Interactive3DFlameProps) {
+  const isVisible = usePageVisibility()
   const [gravity, setGravity] = useState<number>(initialGravity)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animFrameRef = useRef<number>(0)
@@ -38,6 +40,7 @@ export default function Interactive3DFlame({
   }, [initialGravity])
 
   useEffect(() => {
+    if (!isVisible) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d', { alpha: true })
@@ -62,8 +65,10 @@ export default function Interactive3DFlame({
     }
 
     let lastTime = performance.now()
+    let contextLost = false
 
     const render = (now: number) => {
+      if (contextLost) return
       const dt = Math.min((now - lastTime) / 1000, 0.05)
       lastTime = now
       timeRef.current += dt
@@ -232,9 +237,25 @@ export default function Interactive3DFlame({
       animFrameRef.current = requestAnimationFrame(render)
     }
 
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      contextLost = true
+      cancelAnimationFrame(animFrameRef.current)
+    }
+    const onContextRestored = () => {
+      contextLost = false
+      lastTime = performance.now()
+      animFrameRef.current = requestAnimationFrame(render)
+    }
+    canvas.addEventListener('contextlost', onContextLost)
+    canvas.addEventListener('contextrestored', onContextRestored)
     animFrameRef.current = requestAnimationFrame(render)
-    return () => cancelAnimationFrame(animFrameRef.current)
-  }, [gravity])
+    return () => {
+      cancelAnimationFrame(animFrameRef.current)
+      canvas.removeEventListener('contextlost', onContextLost)
+      canvas.removeEventListener('contextrestored', onContextRestored)
+    }
+  }, [gravity, isVisible])
 
   return (
     <div className={`relative flex flex-col items-center ${className}`}>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import usePageVisibility from '../hooks/usePageVisibility'
 import PageWrapper from '../components/PageWrapper'
 import { Play, Pause, RotateCcw, AlertTriangle, Info, Zap } from 'lucide-react'
 import { useTranslation } from '../context/TranslationContext'
@@ -21,6 +22,7 @@ const PRESETS: Preset[] = [
 ]
 
 export default function FlameLabPage() {
+  const isVisible = usePageVisibility()
   const { t } = useTranslation()
   // Simulation parameters
   const [gravityPreset, setGravityPreset] = useState<string>('iss')
@@ -77,7 +79,7 @@ export default function FlameLabPage() {
 
   // Auto demo cycle: ISS -> Moon -> Mars -> Earth
   useEffect(() => {
-    if (!autoDemo) return
+    if (!autoDemo || !isVisible) return
     const order = ['iss', 'moon', 'mars', 'earth']
     const interval = setInterval(() => {
       setGravityPreset(current => {
@@ -88,22 +90,29 @@ export default function FlameLabPage() {
       })
     }, 4000)
     return () => clearInterval(interval)
-  }, [autoDemo])
+  }, [autoDemo, isVisible])
 
   // Simulation loop & canvas rendering
   useEffect(() => {
+    if (!isVisible) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     let lastTimestamp = performance.now()
+    let lastDisplayTimestamp = lastTimestamp
+    let contextLost = false
 
     const render = (now: number) => {
-      const dt = ((now - lastTimestamp) / 1000) * (isPlaying ? simSpeed : 0)
+      if (contextLost) return
+      const dt = Math.min((now - lastTimestamp) / 1000, 0.05) * (isPlaying ? simSpeed : 0)
       lastTimestamp = now
       timeRef.current += dt
-      setSimTime(timeRef.current)
+      if (now - lastDisplayTimestamp >= 100) {
+        setSimTime(timeRef.current)
+        lastDisplayTimestamp = now
+      }
 
       // Record u(t) history for live chart
       uHistoryRef.current.push(buoyantFlowU)
@@ -218,9 +227,26 @@ export default function FlameLabPage() {
       animationFrameRef.current = requestAnimationFrame(render)
     }
 
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      contextLost = true
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+    const onContextRestored = () => {
+      contextLost = false
+      lastTimestamp = performance.now()
+      lastDisplayTimestamp = lastTimestamp
+      animationFrameRef.current = requestAnimationFrame(render)
+    }
+    canvas.addEventListener('contextlost', onContextLost)
+    canvas.addEventListener('contextrestored', onContextRestored)
     animationFrameRef.current = requestAnimationFrame(render)
-    return () => cancelAnimationFrame(animationFrameRef.current)
-  }, [gravityPreset, flameHeightL, oxygen, pressure, buoyantFlowU, isPlaying, simSpeed])
+    return () => {
+      cancelAnimationFrame(animationFrameRef.current)
+      canvas.removeEventListener('contextlost', onContextLost)
+      canvas.removeEventListener('contextrestored', onContextRestored)
+    }
+  }, [gravityPreset, flameHeightL, oxygen, pressure, buoyantFlowU, isPlaying, simSpeed, isVisible])
 
   return (
     <PageWrapper className="max-w-7xl mx-auto px-4 py-8">

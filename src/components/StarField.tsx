@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import usePageVisibility from '../hooks/usePageVisibility'
 
 interface Star {
   x: number
@@ -10,13 +11,16 @@ interface Star {
 }
 
 export default function StarField() {
+  const isVisible = usePageVisibility()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const starsRef  = useRef<Star[]>([])
   const rafRef    = useRef<number>(0)
 
   useEffect(() => {
-    const canvas = canvasRef.current!
-    const ctx    = canvas.getContext('2d')!
+    if (!isVisible) return
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
 
     const resize = () => {
       canvas.width  = window.innerWidth
@@ -36,7 +40,9 @@ export default function StarField() {
     window.addEventListener('resize', resize)
 
     let t = 0
+    let contextLost = false
     const draw = () => {
+      if (contextLost) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       t += 0.008
       starsRef.current.forEach(s => {
@@ -49,12 +55,26 @@ export default function StarField() {
       rafRef.current = requestAnimationFrame(draw)
     }
 
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      contextLost = true
+      cancelAnimationFrame(rafRef.current)
+    }
+    const onContextRestored = () => {
+      contextLost = false
+      resize()
+      rafRef.current = requestAnimationFrame(draw)
+    }
+    canvas.addEventListener('contextlost', onContextLost)
+    canvas.addEventListener('contextrestored', onContextRestored)
     draw()
     return () => {
       cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', resize)
+      canvas.removeEventListener('contextlost', onContextLost)
+      canvas.removeEventListener('contextrestored', onContextRestored)
     }
-  }, [])
+  }, [isVisible])
 
   return (
     <canvas
