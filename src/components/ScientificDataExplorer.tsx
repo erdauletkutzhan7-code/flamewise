@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import PageWrapper from '../components/PageWrapper'
-import { Download, ExternalLink, Filter, Database, CheckCircle2, AlertCircle } from 'lucide-react'
-import { NASA_SCIENTIFIC_FACTS, type ScientificFact } from '../data/nasaFacts'
+import { Download, ExternalLink, Filter } from 'lucide-react'
+import { NASA_SCIENTIFIC_FACTS } from '../data/nasaFacts'
 
 export default function ScientificDataExplorer() {
   const [selectedTopic, setSelectedTopic] = useState<string>('all')
-  const [selectedEvidence, setSelectedEvidence] = useState<string>('all')
+  const [selectedEvidence] = useState<string>('all')
 
   const filteredFacts = NASA_SCIENTIFIC_FACTS.filter(fact => {
     if (selectedTopic !== 'all' && fact.experiment !== selectedTopic) return false

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, type ReactElement } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   EXPERIMENTS,
@@ -41,7 +41,7 @@ type Filters = {
 }
 
 // ─── Helpers ────────────────────────────────────────────────
-const FUEL_OPTIONS: Array<{ value: FuelType | 'all'; label: string; icon?: JSX.Element }> = [
+const FUEL_OPTIONS: Array<{ value: FuelType | 'all'; label: string; icon?: ReactElement }> = [
   { value: 'all', label: 'All' },
   { value: 'solid', label: 'Solid', icon: <Flame className="w-3 h-3" /> },
   { value: 'liquid', label: 'Liquid', icon: <Beaker className="w-3 h-3" /> },

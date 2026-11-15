@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PageWrapper from '../components/PageWrapper'
-import { Bot, Send, Sparkles, ExternalLink, BookOpen, AlertCircle, Info } from 'lucide-react'
-import { CURATED_ASSISTANT_RESPONSES, type CuratedAssistantResponse } from '../data/nasaFacts'
+import { Bot, Send, Sparkles, BookOpen, Info } from 'lucide-react'
+import { CURATED_ASSISTANT_RESPONSES } from '../data/nasaFacts'
 
 interface Message {
   role: 'assistant' | 'user'

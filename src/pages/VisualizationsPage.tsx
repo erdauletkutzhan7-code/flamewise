@@ -8,8 +8,6 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  LineChart,
-  Line,
   Area,
   AreaChart,
   ReferenceLine,
@@ -186,7 +184,6 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
     if (!inView) return
     const num = parseFloat(target.replace(/[^0-9.]/g, ''))
     const isDecimal = target.includes('.')
-    let start = 0
     const duration = 1600
     const startTime = performance.now()
     const tick = (now: number) => {

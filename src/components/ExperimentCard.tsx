@@ -66,7 +66,6 @@ function CircularProgress({ score, color }: { score: number; color: string }) {
 }
 
 function RelevanceBar({
-  label,
   value,
   color,
   icon,
@@ -95,16 +94,11 @@ function RelevanceBar({
 
 export default function ExperimentCard({
   experiment: exp,
-  selectedEnvironment,
   onClick,
 }: ExperimentCardProps) {
   const [hovered, setHovered] = useState(false)
 
   const relevanceEnvs = MISSION_PROFILES.filter(p => p.id !== 'Earth')
-
-  const displayedRelevance = selectedEnvironment
-    ? exp.safetyRelevance[selectedEnvironment]
-    : exp.riskScore
 
   const keyFinding = exp.keyFindings[0]
   const truncatedFinding =

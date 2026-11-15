@@ -29,7 +29,7 @@ export default function FlameLabPage() {
   const [pressure, setPressure] = useState<number>(101.3) // kPa
   const [material, setMaterial] = useState<string>('PMMA')
   const [airflow, setAirflow] = useState<number>(5) // cm/s
-  const [scenario, setScenario] = useState<string>('ISS')
+  const [, setScenario] = useState<string>('ISS')
 
   // Playback state
   const [isPlaying, setIsPlaying] = useState<boolean>(true)
